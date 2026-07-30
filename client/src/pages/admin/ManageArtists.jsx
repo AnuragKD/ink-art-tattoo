@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ARTISTS } from '../../constants/studioData';
 import { Link } from 'react-router-dom';
 import { FiEdit2, FiArrowLeft, FiAward, FiX, FiCheckCircle, FiUploadCloud } from 'react-icons/fi';
 
@@ -33,14 +32,11 @@ export default function ManageArtists() {
     try {
       setLoading(true);
       const res = await axios.get('/api/artists');
-      if (res.data && res.data.data && res.data.data.length > 0) {
+      if (res.data && res.data.data) {
         setArtistsList(res.data.data);
-      } else {
-        setArtistsList(ARTISTS);
       }
     } catch (err) {
-      console.warn('Using fallback artists:', err);
-      setArtistsList(ARTISTS);
+      console.warn('Backend error loading artists:', err);
     } finally {
       setLoading(false);
     }

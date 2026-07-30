@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { GALLERY_ITEMS, TATTOO_STYLES } from '../../constants/studioData';
 import { Link } from 'react-router-dom';
 import { FiPlus, FiTrash2, FiEdit2, FiArrowLeft, FiUploadCloud, FiX, FiCheckCircle } from 'react-icons/fi';
 
 export default function ManageGallery() {
   const [galleryList, setGalleryList] = useState([]);
-  const [stylesList, setStylesList] = useState(TATTOO_STYLES);
+  const [stylesList, setStylesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -36,17 +35,15 @@ export default function ManageGallery() {
         axios.get('/api/styles'),
       ]);
 
-      if (galleryRes.status === 'fulfilled' && galleryRes.value.data?.data?.length > 0) {
+      if (galleryRes.status === 'fulfilled' && galleryRes.value.data?.data) {
         setGalleryList(galleryRes.value.data.data);
-      } else {
-        setGalleryList(GALLERY_ITEMS);
       }
 
-      if (stylesRes.status === 'fulfilled' && stylesRes.value.data?.data?.length > 0) {
+      if (stylesRes.status === 'fulfilled' && stylesRes.value.data?.data) {
         setStylesList(stylesRes.value.data.data);
       }
     } catch (err) {
-      console.warn('Backend API error, using default gallery items:', err);
+      console.warn('Backend API error loading gallery:', err);
     } finally {
       setLoading(false);
     }

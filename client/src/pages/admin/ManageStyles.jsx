@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TATTOO_STYLES } from '../../constants/studioData';
 import { Link } from 'react-router-dom';
 import { FiPlus, FiTrash2, FiEdit2, FiArrowLeft, FiX, FiCheckCircle, FiUploadCloud } from 'react-icons/fi';
 
@@ -32,14 +31,11 @@ export default function ManageStyles() {
     try {
       setLoading(true);
       const res = await axios.get('/api/styles');
-      if (res.data && res.data.data && res.data.data.length > 0) {
+      if (res.data && res.data.data) {
         setStylesList(res.data.data);
-      } else {
-        setStylesList(TATTOO_STYLES);
       }
     } catch (err) {
-      console.warn('Using default styles:', err);
-      setStylesList(TATTOO_STYLES);
+      console.warn('Backend error loading styles:', err);
     } finally {
       setLoading(false);
     }
