@@ -49,7 +49,7 @@ export default function FeaturedArtistsSection() {
 
         {/* Master Artist Spotlight Card */}
         {artist && (
-          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-8 sm:p-14 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center shadow-xl">
+          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center shadow-xl">
             
             {/* Portrait Image */}
             <div className="lg:col-span-5 relative aspect-[3/4] bg-[#18181B] border border-white/[0.06] rounded-2xl overflow-hidden group">
@@ -86,7 +86,7 @@ export default function FeaturedArtistsSection() {
               </p>
 
               {/* Awards */}
-              {artist.awards && artist.awards.length > 0 && (
+              {/* {artist.awards && artist.awards.length > 0 && (
                 <div className="space-y-3 pt-2">
                   <span className="text-xs font-subheading uppercase tracking-wider text-[#7A7A85] font-medium block">
                     Recognition & Honors
@@ -100,7 +100,7 @@ export default function FeaturedArtistsSection() {
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
 
               {/* Action Buttons */}
               <div className="pt-6 flex flex-wrap gap-4">

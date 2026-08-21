@@ -39,8 +39,8 @@ export default function StyleGuideSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
-          {stylesList.slice(0, 4).map((style) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+          {stylesList.slice(0, 3).map((style) => (
             <StyleCard key={style._id || style.id} style={style} />
           ))}
         </div>

@@ -21,7 +21,7 @@ export default function HeroSection() {
       if (imageRef.current) {
         gsap.fromTo(imageRef.current,
           { scale: 1.15, opacity: 0 },
-          { scale: 1, opacity: 0.45, duration: 2, ease: 'power2.out' }
+          { scale: 1, opacity: 1, duration: 2, ease: 'power2.out' }
         );
       }
     }, heroRef);
@@ -36,10 +36,10 @@ export default function HeroSection() {
     <section ref={heroRef} className="relative w-full min-h-screen bg-[#080808] text-[#EAEAEA] flex flex-col justify-between pt-32 pb-16 overflow-hidden select-none">
       
       {/* Background Hero Image */}
-      <div className="absolute inset-0 z-0 w-full h-full overflow-hidden">
+      <div className="absolute inset-0 z-0 w-full h-full overflow-hidden pointer-events-auto ">
         <img
           ref={imageRef}
-          src="/hero_tattoo_bg.png"
+          src="/01_master_full_body.webp"
           alt="Tattoo Studio Hero"
           className="w-full h-full object-cover object-center brightness-90"
         />
@@ -62,9 +62,9 @@ export default function HeroSection() {
             <span className="italic font-light text-gradient-gold">discerning collector.</span>
           </h1>
 
-          <p className="text-base sm:text-lg font-body text-[#7A7A85] leading-relaxed max-w-2xl font-light">
+          {/* <p className="text-base sm:text-lg font-body text-[#7A7A85] leading-relaxed max-w-2xl font-light">
             An atelier dedicated to bespoke body architecture, single-needle micro-realism, and timeless custom tattoo craft.
-          </p>
+          </p> */}
 
           {/* Action Link Buttons */}
           <div className="pt-6 flex flex-col sm:flex-row items-center gap-4">

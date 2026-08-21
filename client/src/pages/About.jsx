@@ -127,7 +127,7 @@ export default function About() {
                 </p>
 
                 {/* Awards */}
-                {masterArtist.awards && masterArtist.awards.length > 0 && (
+                {/* {masterArtist.awards && masterArtist.awards.length > 0 && (
                   <div className="space-y-3 pt-2">
                     <h4 className="font-subheading text-xs uppercase tracking-widest text-[#EAEAEA] font-medium flex items-center gap-2">
                       <FiAward className="w-4 h-4 text-[#B8976A]" /> Recognition & Honors
@@ -140,7 +140,7 @@ export default function About() {
                       ))}
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           </div>

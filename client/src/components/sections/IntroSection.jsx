@@ -4,7 +4,7 @@ import axios from 'axios';
 import { FiShield, FiCpu, FiFeather, FiArrowRight } from 'react-icons/fi';
 
 export default function IntroSection() {
-  const [introImage, setIntroImage] = useState("https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&w=1000&q=80");
+  const [introImage, setIntroImage] = useState("/intro_image.webp");
 
   useEffect(() => {
     fetchSettings();
@@ -73,7 +73,7 @@ export default function IntroSection() {
             </p>
 
             {/* Feature Columns */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-8 border-t border-white/[0.06]">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               {features.map((item, idx) => {
                 const IconComponent = item.icon;
                 return (

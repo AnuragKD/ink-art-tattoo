@@ -17,7 +17,6 @@ import ManageBookings from '../pages/admin/ManageBookings';
 import ManageArtists from '../pages/admin/ManageArtists';
 import ManageGallery from '../pages/admin/ManageGallery';
 import ManageStyles from '../pages/admin/ManageStyles';
-import ManageSettings from '../pages/admin/ManageSettings';
 import ManageInstagram from '../pages/admin/ManageInstagram';
 
 const ProtectedAdminRoute = ({ children }) => {
@@ -33,6 +32,7 @@ export default function AppRoutes() {
     <Routes>
       {/* Public Pages */}
       <Route path="/" element={<Home />} />
+      <Route path="/home2" element={<Navigate to="/" replace />} />
       <Route path="/about" element={<About />} />
       <Route path="/artists" element={<Navigate to="/about" replace />} />
       <Route path="/artists/:id" element={<Navigate to="/about" replace />} />
@@ -94,14 +94,6 @@ export default function AppRoutes() {
         element={
           <ProtectedAdminRoute>
             <ManageInstagram />
-          </ProtectedAdminRoute>
-        }
-      />
-      <Route
-        path="/admin/settings"
-        element={
-          <ProtectedAdminRoute>
-            <ManageSettings />
           </ProtectedAdminRoute>
         }
       />

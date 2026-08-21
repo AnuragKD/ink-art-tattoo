@@ -18,8 +18,10 @@
     --radius-2xl: 1.5rem;
 
     /* Global Section Vertical Padding (Single Source of Truth) */
-    --section-py-mobile: 8rem;   /* 128px */
-    --section-py-desktop: 6rem; /* 176px */
+    --section-py-mobile: 3rem;
+    /* 128px */
+    --section-py-desktop: 6rem;
+    /* 176px */
   }
 
   body {
@@ -29,7 +31,10 @@
     overflow-x: hidden;
   }
 
-  h1, h2, h3, .font-heading {
+  h1,
+  h2,
+  h3,
+  .font-heading {
     font-family: 'Cormorant Garamond', serif;
     letter-spacing: -0.01em;
     font-weight: 500;
@@ -78,30 +83,38 @@
 ::-webkit-scrollbar {
   width: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: #080808;
 }
+
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-gold);
 }
 
 /* Lenis Smooth Scroll Recommended Base Styles */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
+
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
+
 .lenis.lenis-smooth [data-lenis-prevent] {
   overscroll-behavior: contain;
 }
+
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
 .lenis.lenis-smooth iframe {
   pointer-events: none;
 }
@@ -152,7 +165,8 @@ html.lenis, html.lenis body {
   body.custom-cursor-active {
     cursor: none;
   }
-  body.custom-cursor-active a, 
+
+  body.custom-cursor-active a,
   body.custom-cursor-active button,
   body.custom-cursor-active [role="button"] {
     cursor: none;

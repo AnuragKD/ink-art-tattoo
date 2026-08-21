@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import { FiPlus, FiTrash2, FiEdit2, FiArrowLeft, FiUploadCloud, FiX, FiCheckCircle } from 'react-icons/fi';
+import { FiPlus, FiTrash2, FiEdit2, FiUploadCloud, FiX, FiCheckCircle } from 'react-icons/fi';
+import AdminNavbar from '../../components/common/AdminNavbar';
 
 export default function ManageGallery() {
   const [galleryList, setGalleryList] = useState([]);
@@ -12,14 +12,8 @@ export default function ManageGallery() {
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
-  // Form State
-  const [formData, setFormData] = useState({
-    title: '',
-    category: 'Micro-Realism',
-    artist: 'Marcus Vance',
-    placement: '',
-    hours: '',
-  });
+  // Form State — Only essential fields shown on frontend
+  const [category, setCategory] = useState('Realism');
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
 
@@ -51,13 +45,7 @@ export default function ManageGallery() {
 
   const openAddModal = () => {
     setEditingItem(null);
-    setFormData({
-      title: '',
-      category: stylesList[0]?.title || 'Micro-Realism',
-      artist: 'Marcus Vance',
-      placement: '',
-      hours: '',
-    });
+    setCategory(stylesList.length > 0 ? stylesList[0].title : 'Realism');
     setSelectedFile(null);
     setPreviewUrl('');
     setModalOpen(true);
@@ -65,13 +53,7 @@ export default function ManageGallery() {
 
   const openEditModal = (item) => {
     setEditingItem(item);
-    setFormData({
-      title: item.title || '',
-      category: item.category || stylesList[0]?.title || 'Micro-Realism',
-      artist: item.artist || 'Marcus Vance',
-      placement: item.placement || '',
-      hours: item.hours || '',
-    });
+    setCategory(item.category || 'Realism');
     setSelectedFile(null);
     setPreviewUrl(item.image || '');
     setModalOpen(true);
@@ -87,27 +69,25 @@ export default function ManageGallery() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedFile && !previewUrl) {
-      alert('Please select an image file to upload.');
+    if (!editingItem && !selectedFile) {
+      alert('Please select an artwork image to upload.');
       return;
     }
 
     try {
       setSubmitting(true);
       const body = new FormData();
-      body.append('title', formData.title || formData.category);
-      body.append('category', formData.category);
-      body.append('artist', formData.artist);
-      body.append('placement', formData.placement || 'Custom Placement');
-      body.append('hours', formData.hours || 'Custom Session');
+      body.append('category', category);
+      body.append('title', category);
 
       if (selectedFile) {
         body.append('imageFile', selectedFile);
       }
 
       let res;
-      if (editingItem && editingItem._id) {
-        res = await axios.put(`/api/gallery/${editingItem._id}`, body, {
+      if (editingItem) {
+        const id = editingItem._id || editingItem.id;
+        res = await axios.put(`/api/gallery/${id}`, body, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
       } else {
@@ -117,7 +97,7 @@ export default function ManageGallery() {
       }
 
       if (res.data && res.data.data) {
-        setSuccessMsg(editingItem ? 'Gallery artwork updated successfully!' : 'New tattoo artwork uploaded successfully!');
+        setSuccessMsg(editingItem ? 'Artwork category updated!' : 'New artwork published to gallery!');
         setTimeout(() => {
           setSuccessMsg('');
           setModalOpen(false);
@@ -126,89 +106,91 @@ export default function ManageGallery() {
       }
     } catch (err) {
       console.error('Error saving gallery item:', err);
-      alert('Failed to save artwork. Make sure server is running.');
+      alert('Failed to save artwork. Make sure backend server is running.');
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to remove this artwork from the gallery?')) return;
-
+    if (!window.confirm('Are you sure you want to delete this artwork from the gallery?')) return;
     try {
       await axios.delete(`/api/gallery/${id}`);
-      setGalleryList(galleryList.filter((item) => (item._id || item.id) !== id));
+      setGalleryList(galleryList.filter((g) => (g._id || g.id) !== id));
     } catch (err) {
-      console.warn('Backend delete failed, removing from local state:', err);
-      setGalleryList(galleryList.filter((item) => (item._id || item.id) !== id));
+      console.error('Error deleting gallery item:', err);
+      setGalleryList(galleryList.filter((g) => (g._id || g.id) !== id));
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#080808] text-[#EAEAEA] pt-28 pb-20 px-6 sm:px-8 lg:px-10">
-      <div className="max-w-7xl mx-auto space-y-10">
+    <div className="min-h-screen bg-[#080808] text-[#EAEAEA] select-none">
+      
+      {/* Shared Responsive Admin Header */}
+      <AdminNavbar />
+
+      <main className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 sm:space-y-10">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.06] pb-8 gap-6">
-          <div className="space-y-2">
-            <Link to="/admin/dashboard" className="text-xs font-subheading uppercase text-[#B8976A] flex items-center gap-1 hover:text-[#D4B88A] transition-colors">
-              <FiArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
-            </Link>
-            <h1 className="font-heading text-4xl sm:text-5xl text-[#EAEAEA] tracking-tight">
-              Manage <span className="text-gradient-gold italic font-light">Curated Gallery</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.06] pb-6 gap-4">
+          <div className="space-y-1">
+            <span className="text-xs uppercase font-subheading tracking-[0.25em] text-[#B8976A] font-medium block">
+              Portfolio Catalog
+            </span>
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-[#EAEAEA] tracking-tight">
+              Manage <span className="text-gradient-gold italic font-light">Gallery Artworks</span>
             </h1>
           </div>
 
           <button
             onClick={openAddModal}
-            className="inline-flex items-center gap-2.5 bg-[#B8976A] text-[#080808] font-subheading text-xs uppercase tracking-wider px-7 py-3.5 rounded-full font-medium hover:bg-[#D4B88A] transition-all duration-500 shadow-lg shadow-[#B8976A]/10"
+            className="inline-flex items-center justify-center gap-2 font-subheading text-xs uppercase tracking-wider bg-[#B8976A] text-[#080808] px-6 py-3 rounded-full font-medium hover:bg-[#D4B88A] transition-all duration-300 shadow-md self-start sm:self-auto"
           >
-            <FiPlus className="w-4 h-4" /> Upload New Artwork
+            <FiPlus className="w-4 h-4" />
+            <span>Upload New Artwork</span>
           </button>
         </div>
 
-        {/* Loading state */}
         {loading ? (
           <div className="py-20 text-center text-[#7A7A85] font-subheading text-sm">
-            Loading studio gallery artwork...
+            Loading gallery artworks...
+          </div>
+        ) : galleryList.length === 0 ? (
+          <div className="py-20 text-center text-[#7A7A85] font-body text-sm font-light">
+            No gallery items uploaded yet. Click "Upload New Artwork" to publish images.
           </div>
         ) : (
-          /* Admin Pinterest Column Masonry Grid */
-          <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {galleryList.map((item) => {
               const itemId = item._id || item.id;
               return (
-                <div key={itemId} className="break-inside-avoid mb-6">
-                  <div className="group relative bg-[#111113] border border-white/[0.06] rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between hover:border-[#B8976A]/30 transition-all duration-500">
-                    <div className="relative overflow-hidden bg-[#18181B]">
-                      <img
-                        src={item.image}
-                        alt={item.category || item.title}
-                        className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out"
-                      />
-                      
-                      {/* Style Label Badge */}
-                      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#080808]/90 via-[#080808]/40 to-transparent pointer-events-none flex items-end justify-between p-4">
-                        <span className="font-subheading text-xs text-[#EAEAEA] tracking-wide font-medium bg-[#080808]/75 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/[0.1]">
-                          {item.category}
-                        </span>
-                      </div>
+                <div key={itemId} className="group bg-[#111113] border border-white/[0.06] rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between hover:border-[#B8976A]/40 transition-colors">
+                  <div className="aspect-[3/4] bg-[#18181B] relative overflow-hidden">
+                    <img src={item.image} alt={item.category} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute top-3 left-3 bg-[#080808]/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/[0.1] text-[10px] font-subheading uppercase text-[#B8976A] font-medium tracking-wider">
+                      {item.category}
                     </div>
+                  </div>
 
-                    {/* Footer with Edit and Delete Buttons */}
-                    <div className="p-4 border-t border-white/[0.04] bg-[#111113] flex items-center justify-between text-xs font-subheading">
+                  <div className="p-4 flex items-center justify-between border-t border-white/[0.06] bg-[#111113]">
+                    <span className="font-subheading text-xs text-[#EAEAEA] font-medium truncate max-w-[120px]">
+                      {item.category}
+                    </span>
+
+                    <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => openEditModal(item)}
-                        className="inline-flex items-center gap-1 text-[#B8976A] hover:text-[#D4B88A] transition-colors"
+                        className="p-2 rounded-lg bg-white/[0.04] text-[#7A7A85] hover:text-[#B8976A] hover:bg-white/[0.08] transition-colors"
+                        title="Edit Artwork"
                       >
-                        <FiEdit2 className="w-3.5 h-3.5" /> Edit
+                        <FiEdit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDelete(itemId)}
-                        className="p-2 text-[#7A7A85] hover:text-red-400 transition-colors rounded-full hover:bg-white/[0.04]"
+                        className="p-2 rounded-lg bg-white/[0.04] text-[#7A7A85] hover:text-red-400 hover:bg-white/[0.08] transition-colors"
                         title="Delete Artwork"
                       >
-                        <FiTrash2 className="w-4 h-4" />
+                        <FiTrash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -218,34 +200,36 @@ export default function ManageGallery() {
           </div>
         )}
 
-      </div>
+      </main>
 
-      {/* Add / Edit Artwork Modal */}
+      {/* Upload/Edit Modal — Responsive Max-Height with Internal Scroll */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#080808]/90 backdrop-blur-3xl overflow-y-auto">
-          <div className="relative max-w-xl w-full bg-[#111113] border border-white/[0.06] rounded-2xl p-8 sm:p-10 space-y-6 shadow-2xl my-8">
+        <div data-lenis-prevent className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          <div className="bg-[#111113] border border-white/[0.08] rounded-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl relative my-auto max-h-[90vh] flex flex-col">
             
-            <button
-              onClick={() => setModalOpen(false)}
-              className="absolute top-6 right-6 w-9 h-9 rounded-full bg-white/[0.03] border border-white/[0.06] text-[#7A7A85] hover:text-[#EAEAEA] flex items-center justify-center transition-colors"
-            >
-              <FiX className="w-5 h-5" />
-            </button>
-
-            <div className="space-y-1 border-b border-white/[0.06] pb-5">
-              <span className="text-xs uppercase font-subheading tracking-widest text-[#B8976A] font-medium">Studio Gallery</span>
-              <h2 className="font-heading text-3xl text-[#EAEAEA]">{editingItem ? 'Edit Tattoo Artwork' : 'Upload Tattoo Artwork'}</h2>
+            {/* Fixed Header */}
+            <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 shrink-0">
+              <h3 className="font-heading text-2xl text-[#EAEAEA]">
+                {editingItem ? 'Edit Gallery Artwork' : 'Upload New Gallery Artwork'}
+              </h3>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="text-[#7A7A85] hover:text-[#EAEAEA] p-1.5 rounded-lg bg-white/[0.04] transition-colors"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
             </div>
 
             {successMsg ? (
-              <div className="py-10 text-center space-y-3 bg-white/[0.02] border border-[#34D399]/20 rounded-xl">
-                <FiCheckCircle className="w-10 h-10 text-[#34D399] mx-auto" />
-                <p className="text-sm font-subheading text-[#EAEAEA]">{successMsg}</p>
+              <div className="p-4 bg-white/[0.02] border border-[#34D399]/30 text-[#34D399] text-xs font-subheading rounded-xl flex items-center gap-2">
+                <FiCheckCircle className="w-5 h-5 shrink-0" />
+                <span>{successMsg}</span>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              /* Auto-scrolling Form Container */
+              <form onSubmit={handleSubmit} className="space-y-5 overflow-y-auto pr-1 flex-1">
                 
-                {/* File Drop Area */}
+                {/* Upload Image Box */}
                 <div className="space-y-2">
                   <label className="text-xs font-subheading uppercase tracking-wider text-[#7A7A85] font-medium block">
                     Artwork Image *
@@ -259,7 +243,7 @@ export default function ManageGallery() {
                     />
                     {previewUrl ? (
                       <div className="space-y-2">
-                        <img src={previewUrl} alt="Preview" className="max-h-48 mx-auto rounded-lg object-contain" />
+                        <img src={previewUrl} alt="Preview" className="max-h-44 mx-auto rounded-lg object-contain" />
                         <span className="text-xs text-[#B8976A] font-subheading block">Click or drag to change image</span>
                       </div>
                     ) : (
@@ -278,35 +262,34 @@ export default function ManageGallery() {
                     Tattoo Style Label (Category) *
                   </label>
                   <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-[#18181B] border border-[#B8976A]/40 rounded-xl p-4 text-[#EAEAEA] text-sm focus:border-[#B8976A] focus:outline-none font-medium"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full bg-[#18181B] border border-[#B8976A]/40 rounded-xl p-3.5 text-[#EAEAEA] text-sm focus:border-[#B8976A] focus:outline-none font-medium"
                   >
                     {stylesList.map((style) => (
                       <option key={style._id || style.id || style.title} value={style.title}>
                         {style.title}
                       </option>
                     ))}
-                    <option value="Micro-Realism">Micro-Realism</option>
+                    <option value="Realism">Realism</option>
+                    <option value="Black & Grey">Black & Grey</option>
                     <option value="Fine Line">Fine Line</option>
-                    <option value="Irezumi">Irezumi</option>
-                    <option value="Trash Polka">Trash Polka</option>
-                    <option value="Custom Art">Custom Art</option>
+                    <option value="Minimalist">Minimalist</option>
+                    <option value="Traditional">Traditional</option>
+                    <option value="Neo-Traditional">Neo-Traditional</option>
+                    <option value="Japanese">Japanese</option>
+                    <option value="Blackwork">Blackwork</option>
+                    <option value="Geometric">Geometric</option>
+                    <option value="Dotwork">Dotwork</option>
+                    <option value="Watercolor">Watercolor</option>
+                    <option value="Lettering">Lettering</option>
+                    <option value="Ornamental">Ornamental</option>
+                    <option value="Tribal">Tribal</option>
+                    <option value="Portrait">Portrait</option>
                   </select>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-subheading uppercase tracking-wider text-[#7A7A85] font-medium">Artwork Title (Optional)</label>
-                  <input
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="e.g. Celestial Serpent (Defaults to Style Label if empty)"
-                    className="w-full bg-[#18181B] border border-white/[0.06] rounded-xl p-3.5 text-[#EAEAEA] text-sm focus:border-[#B8976A]/50 focus:outline-none"
-                  />
-                </div>
-
-                <div className="pt-4 flex items-center justify-end gap-3 border-t border-white/[0.06]">
+                <div className="pt-4 flex items-center justify-end gap-3 border-t border-white/[0.06] shrink-0">
                   <button
                     type="button"
                     onClick={() => setModalOpen(false)}
@@ -319,7 +302,7 @@ export default function ManageGallery() {
                     disabled={submitting}
                     className="bg-[#B8976A] text-[#080808] font-subheading text-xs uppercase tracking-wider px-8 py-3.5 rounded-full font-medium hover:bg-[#D4B88A] transition-all duration-300 disabled:opacity-50"
                   >
-                    {submitting ? 'Saving Artwork...' : editingItem ? 'Save Artwork Changes' : 'Save & Publish Artwork'}
+                    {submitting ? 'Saving Artwork...' : editingItem ? 'Save Changes' : 'Save & Publish Artwork'}
                   </button>
                 </div>
 

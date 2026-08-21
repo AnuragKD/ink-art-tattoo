@@ -22,17 +22,10 @@ export default function MagneticButton({
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
 
-      gsap.to(button, {
-        x: x * 0.25,
-        y: y * 0.25,
-        duration: 0.5,
-        ease: 'power2.out',
-      });
-
       if (textRef.current) {
         gsap.to(textRef.current, {
-          x: x * 0.12,
-          y: y * 0.12,
+          x: x * 0.25,
+          y: y * 0.25,
           duration: 0.5,
           ease: 'power2.out',
         });
@@ -40,13 +33,6 @@ export default function MagneticButton({
     };
 
     const handleMouseLeave = () => {
-      gsap.to(button, {
-        x: 0,
-        y: 0,
-        duration: 0.7,
-        ease: 'elastic.out(1, 0.4)',
-      });
-
       if (textRef.current) {
         gsap.to(textRef.current, {
           x: 0,

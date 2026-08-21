@@ -4,6 +4,7 @@ import LenisProvider from './components/common/LenisProvider';
 import NoiseBackground from './components/ui/NoiseBackground';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
+import SplashScreen from './components/common/SplashScreen';
 import AppRoutes from './routes/AppRoutes';
 
 function AppLayout() {
@@ -13,6 +14,7 @@ function AppLayout() {
   return (
     <LenisProvider>
       <div className="min-h-screen bg-[#080808] text-[#EAEAEA] selection:bg-[#B8976A]/30 selection:text-white relative">
+        {!isAdminRoute && <SplashScreen />}
         <NoiseBackground />
         
         {!isAdminRoute && <Header />}

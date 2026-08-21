@@ -8,23 +8,35 @@ export default function Gallery() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedLightboxItem, setSelectedLightboxItem] = useState(null);
   const [galleryData, setGalleryData] = useState(GALLERY_ITEMS);
+  const [categories, setCategories] = useState(['All']);
 
   useEffect(() => {
-    fetchGallery();
+    fetchData();
   }, []);
 
-  const fetchGallery = async () => {
+  const fetchData = async () => {
     try {
       const res = await axios.get('/api/gallery');
+      let items = galleryData;
       if (res.data && res.data.data && res.data.data.length > 0) {
-        setGalleryData(res.data.data);
+        items = res.data.data;
+        setGalleryData(items);
       }
+
+      // Only display category tabs if at least 1 gallery artwork exists for that style
+      const activeCategories = Array.from(
+        new Set(items.map((i) => i.category).filter(Boolean))
+      );
+
+      setCategories(['All', ...activeCategories]);
     } catch (err) {
       console.warn('Using default gallery items:', err);
+      const activeCategories = Array.from(
+        new Set(galleryData.map((i) => i.category).filter(Boolean))
+      );
+      setCategories(['All', ...activeCategories]);
     }
   };
-
-  const categories = ['All', 'Micro-Realism', 'Fine Line', 'Irezumi', 'Trash Polka'];
 
   const filteredItems = activeCategory === 'All'
     ? galleryData
@@ -43,58 +55,66 @@ export default function Gallery() {
             Curated <span className="text-gradient-gold italic font-light">Gallery</span>
           </h1>
           <p className="text-base sm:text-lg font-body text-[#7A7A85] leading-relaxed font-light">
-            High-resolution inspection of completed tattoos. Hover any image to view its style category.
+            High-resolution inspection of completed tattoos. Filter by your preferred style below.
           </p>
 
-          {/* Filter Pills */}
-          <div className="flex flex-wrap justify-center gap-2.5 pt-6">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`font-subheading text-xs tracking-wide px-6 py-2.5 rounded-full transition-all duration-300 ${
-                  activeCategory === cat
-                    ? 'bg-[#B8976A] text-[#080808] font-medium'
-                    : 'bg-white/[0.03] text-[#7A7A85] hover:text-[#EAEAEA] border border-white/[0.06]'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+          {/* Dynamic Filter Pills — Only rendered for styles with uploaded artwork */}
+          {categories.length > 1 && (
+            <div className="flex flex-wrap justify-center gap-2.5 pt-6">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`font-subheading text-xs tracking-wide px-6 py-2.5 rounded-full transition-all duration-300 ${
+                    activeCategory === cat
+                      ? 'bg-[#B8976A] text-[#080808] font-medium'
+                      : 'bg-white/[0.03] text-[#7A7A85] hover:text-[#EAEAEA] border border-white/[0.06]'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Pinterest Column Masonry Grid */}
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6">
-          {filteredItems.map((item) => {
-            const itemId = item._id || item.id;
-            return (
-              <div key={itemId} className="break-inside-avoid mb-6">
-                <div
-                  onClick={() => setSelectedLightboxItem(item)}
-                  className="group relative bg-[#111113] border border-white/[0.06] rounded-2xl overflow-hidden cursor-pointer hover:border-[#B8976A]/30 transition-all duration-500 hover:shadow-2xl hover:shadow-black/60"
-                  data-cursor="Inspect"
-                >
-                  <div className="relative overflow-hidden bg-[#18181B]">
-                    <img
-                      src={item.image}
-                      alt={item.category || 'Tattoo Art'}
-                      className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out"
-                      loading="lazy"
-                    />
-                    
-                    {/* Bottom Gradient Shade on Hover */}
-                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#080808]/90 via-[#080808]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
-                      <span className="font-heading text-2xl text-[#EAEAEA] tracking-wide font-light">
-                        {item.category}
-                      </span>
+        {filteredItems.length === 0 ? (
+          <div className="py-16 text-center text-[#7A7A85] font-subheading text-sm">
+            No artwork found in this category.
+          </div>
+        ) : (
+          <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6">
+            {filteredItems.map((item) => {
+              const itemId = item._id || item.id;
+              return (
+                <div key={itemId} className="break-inside-avoid mb-6">
+                  <div
+                    onClick={() => setSelectedLightboxItem(item)}
+                    className="group relative bg-[#111113] border border-white/[0.06] rounded-2xl overflow-hidden cursor-pointer hover:border-[#B8976A]/30 transition-all duration-500 hover:shadow-2xl hover:shadow-black/60"
+                    data-cursor="Inspect"
+                  >
+                    <div className="relative overflow-hidden bg-[#18181B]">
+                      <img
+                        src={item.image}
+                        alt={item.category || 'Tattoo Art'}
+                        className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out"
+                        loading="lazy"
+                      />
+                      
+                      {/* Bottom Gradient Shade on Hover */}
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#080808]/90 via-[#080808]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                        <span className="font-heading text-2xl text-[#EAEAEA] tracking-wide font-light">
+                          {item.category}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
       </div>
 

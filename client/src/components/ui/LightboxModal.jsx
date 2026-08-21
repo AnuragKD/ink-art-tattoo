@@ -8,7 +8,7 @@ export default function LightboxModal({ item, onClose }) {
 
   return ReactDOM.createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-[#080808]/95 backdrop-blur-3xl">
+      <div data-lenis-prevent className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-[#080808]/95 backdrop-blur-3xl">
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}

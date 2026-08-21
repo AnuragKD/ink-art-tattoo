@@ -11,11 +11,27 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      if (location.pathname === '/') {
+        const animSection = document.getElementById('scroll-anim-section');
+        if (animSection) {
+          const rect = animSection.getBoundingClientRect();
+          setIsScrolled(rect.bottom <= 100);
+        } else {
+          setIsScrolled(window.scrollY > 40);
+        }
+      } else {
+        setIsScrolled(window.scrollY > 40);
+      }
     };
+
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    window.addEventListener('resize', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [location.pathname]);
 
   useEffect(() => {
     setMobileMenuOpen(false);

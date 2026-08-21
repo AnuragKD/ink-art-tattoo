@@ -23,9 +23,9 @@ export default function TattooStyles() {
   };
 
   return (
-    <div className="pt-36 pb-24 bg-[#080808]">
+    <div className="pt-36 bg-[#080808]">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 space-y-20">
-        
+
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-6">
           <span className="text-xs uppercase font-subheading tracking-[0.25em] text-[#B8976A] font-medium block">
@@ -40,7 +40,7 @@ export default function TattooStyles() {
         </div>
 
         {/* Styles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
           {stylesList.map((style) => (
             <StyleCard key={style._id || style.id} style={style} />
           ))}

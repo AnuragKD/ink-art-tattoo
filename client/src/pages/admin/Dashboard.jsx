@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import { FiCalendar, FiUsers, FiImage, FiLogOut, FiFeather, FiInstagram } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import { FiCalendar, FiUsers, FiImage, FiFeather, FiArrowRight, FiCheck, FiX } from 'react-icons/fi';
+import AdminNavbar from '../../components/common/AdminNavbar';
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-
   const [bookings, setBookings] = useState([]);
   const [galleryCount, setGalleryCount] = useState(0);
   const [artistCount, setArtistCount] = useState(1);
@@ -45,11 +44,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    navigate('/admin/login');
-  };
-
   const updateStatus = async (id, newStatus) => {
     try {
       await axios.put(`/api/bookings/${id}`, { status: newStatus });
@@ -60,90 +54,67 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#080808] text-[#EAEAEA] pt-28 pb-20 px-6 sm:px-8 lg:px-10">
-      <div className="max-w-7xl mx-auto space-y-10">
-        
-        {/* Admin Navigation Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 border-b border-white/[0.06] pb-8">
-          <div>
-            <span className="text-xs uppercase font-subheading tracking-[0.25em] text-[#B8976A] font-medium block">
-              Ink Art Atelier Portal
-            </span>
-            <h1 className="font-heading text-4xl sm:text-5xl text-[#EAEAEA] tracking-tight">
-              Studio <span className="text-gradient-gold italic font-light">CMS Dashboard</span>
-            </h1>
-          </div>
+    <div className="min-h-screen bg-[#080808] text-[#EAEAEA] select-none">
+      
+      {/* Shared Responsive Admin Header */}
+      <AdminNavbar />
 
-          <div className="flex items-center gap-6 flex-wrap">
-            <Link to="/admin/bookings" className="text-xs font-subheading uppercase tracking-wider text-[#7A7A85] hover:text-[#EAEAEA] transition-colors">
-              Enquiries
-            </Link>
-            <Link to="/admin/artists" className="text-xs font-subheading uppercase tracking-wider text-[#7A7A85] hover:text-[#EAEAEA] transition-colors">
-              Artist Profile
-            </Link>
-            <Link to="/admin/styles" className="text-xs font-subheading uppercase tracking-wider text-[#7A7A85] hover:text-[#EAEAEA] transition-colors">
-              Tattoo Styles
-            </Link>
-            <Link to="/admin/gallery" className="text-xs font-subheading uppercase tracking-wider text-[#7A7A85] hover:text-[#EAEAEA] transition-colors">
-              Gallery
-            </Link>
-            <Link to="/admin/instagram" className="text-xs font-subheading uppercase tracking-wider text-[#7A7A85] hover:text-[#EAEAEA] transition-colors">
-              Instagram Feed
-            </Link>
-            <Link to="/admin/settings" className="text-xs font-subheading uppercase tracking-wider text-[#7A7A85] hover:text-[#EAEAEA] transition-colors">
-              Site Images
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center gap-2 font-subheading text-xs uppercase tracking-wider bg-white/[0.04] border border-white/[0.06] text-[#EAEAEA] px-5 py-2.5 rounded-full hover:border-[#B8976A]/30 hover:text-[#B8976A] transition-all duration-300"
-            >
-              <FiLogOut className="w-3.5 h-3.5" />
-              <span>Logout</span>
-            </button>
+      <main className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 sm:space-y-10">
+        
+        {/* Page Title */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/[0.06] pb-6">
+          <div className="space-y-1">
+            <span className="text-xs uppercase font-subheading tracking-[0.25em] text-[#B8976A] font-medium block">
+              Studio Management
+            </span>
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-[#EAEAEA] tracking-tight">
+              Atelier <span className="text-gradient-gold italic font-light">CMS Dashboard</span>
+            </h1>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-7 space-y-3 shadow-xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 sm:p-7 space-y-3 shadow-xl">
             <div className="flex items-center justify-between text-[#B8976A]">
               <span className="font-subheading text-xs uppercase tracking-wider text-[#7A7A85]">Client Enquiries</span>
               <FiCalendar className="w-5 h-5" />
             </div>
-            <span className="font-heading text-4xl text-[#EAEAEA] block font-light">{bookings.length}</span>
+            <span className="font-heading text-3xl sm:text-4xl text-[#EAEAEA] block font-light">{bookings.length}</span>
           </div>
 
-          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-7 space-y-3 shadow-xl">
+          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 sm:p-7 space-y-3 shadow-xl">
             <div className="flex items-center justify-between text-[#D4B88A]">
               <span className="font-subheading text-xs uppercase tracking-wider text-[#7A7A85]">Tattoo Styles</span>
               <FiFeather className="w-5 h-5" />
             </div>
-            <span className="font-heading text-4xl text-[#EAEAEA] block font-light">{styleCount}</span>
+            <span className="font-heading text-3xl sm:text-4xl text-[#EAEAEA] block font-light">{styleCount}</span>
           </div>
 
-          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-7 space-y-3 shadow-xl">
+          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 sm:p-7 space-y-3 shadow-xl">
             <div className="flex items-center justify-between text-[#34D399]">
               <span className="font-subheading text-xs uppercase tracking-wider text-[#7A7A85]">Gallery Artworks</span>
               <FiImage className="w-5 h-5" />
             </div>
-            <span className="font-heading text-4xl text-[#EAEAEA] block font-light">{galleryCount}</span>
+            <span className="font-heading text-3xl sm:text-4xl text-[#EAEAEA] block font-light">{galleryCount}</span>
           </div>
 
-          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-7 space-y-3 shadow-xl">
+          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 sm:p-7 space-y-3 shadow-xl">
             <div className="flex items-center justify-between text-[#B8976A]">
               <span className="font-subheading text-xs uppercase tracking-wider text-[#7A7A85]">Master Artists</span>
               <FiUsers className="w-5 h-5" />
             </div>
-            <span className="font-heading text-4xl text-[#EAEAEA] block font-light">{artistCount}</span>
+            <span className="font-heading text-3xl sm:text-4xl text-[#EAEAEA] block font-light">{artistCount}</span>
           </div>
         </div>
 
-        {/* Bookings Queue */}
-        <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-8 space-y-6 shadow-xl">
-          <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
-            <h2 className="font-heading text-2xl text-[#EAEAEA]">Recent Client Consultation Enquiries</h2>
-            <Link to="/admin/bookings" className="text-xs font-subheading uppercase text-[#B8976A] hover:text-[#D4B88A] transition-colors">
-              View All Queue →
+        {/* Bookings Queue Box */}
+        <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-5 sm:p-8 space-y-6 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.06] pb-4">
+            <h2 className="font-heading text-xl sm:text-2xl text-[#EAEAEA]">Recent Client Consultation Enquiries</h2>
+            <Link to="/admin/bookings" className="text-xs font-subheading uppercase text-[#B8976A] hover:text-[#D4B88A] transition-colors flex items-center gap-1">
+              <span>View All Queue</span>
+              <FiArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
@@ -156,8 +127,8 @@ export default function Dashboard() {
               No client enquiries yet. Submissions from the website Contact desk will appear here in real-time.
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm font-body">
+            <div className="overflow-x-auto w-full">
+              <table className="w-full text-left text-sm font-body min-w-[600px]">
                 <thead className="bg-[#18181B] text-[#7A7A85] font-subheading uppercase text-xs tracking-wider border-b border-white/[0.06]">
                   <tr>
                     <th className="p-4 rounded-l-xl">Client</th>
@@ -192,7 +163,7 @@ export default function Dashboard() {
                             {b.status || 'Pending'}
                           </span>
                         </td>
-                        <td className="p-4 text-right space-x-2">
+                        <td className="p-4 text-right space-x-2 whitespace-nowrap">
                           <button
                             onClick={() => updateStatus(bookingId, 'Confirmed')}
                             className="px-3.5 py-1.5 bg-[#B8976A] text-[#080808] text-xs font-subheading font-medium rounded-full hover:bg-[#D4B88A] transition-colors"
@@ -215,7 +186,7 @@ export default function Dashboard() {
           )}
         </div>
 
-      </div>
+      </main>
     </div>
   );
 }

@@ -8,7 +8,6 @@ export default function Contact() {
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', style: '', message: '' });
   const [stylesList, setStylesList] = useState(TATTOO_STYLES);
-  const [locationImage, setLocationImage] = useState('https://images.unsplash.com/photo-1598371839696-5c5bb00bd472?auto=format&fit=crop&w=800&q=80');
 
   useEffect(() => {
     fetchData();
@@ -16,15 +15,9 @@ export default function Contact() {
 
   const fetchData = async () => {
     try {
-      const [stylesRes, settingsRes] = await Promise.allSettled([
-        axios.get('/api/styles'),
-        axios.get('/api/settings'),
-      ]);
-      if (stylesRes.status === 'fulfilled' && stylesRes.value.data?.data?.length > 0) {
-        setStylesList(stylesRes.value.data.data);
-      }
-      if (settingsRes.status === 'fulfilled' && settingsRes.value.data?.data?.contactBannerImage) {
-        setLocationImage(settingsRes.value.data.data.contactBannerImage);
+      const res = await axios.get('/api/styles');
+      if (res.data?.data?.length > 0) {
+        setStylesList(res.data.data);
       }
     } catch (err) {
       console.warn('Using default fallback data:', err);
@@ -60,7 +53,7 @@ export default function Contact() {
 
   return (
     <div className="pt-36 pb-24 bg-[#080808]">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 space-y-20">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 space-y-16">
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-6">
@@ -89,7 +82,7 @@ export default function Contact() {
         </div>
 
         {/* 2-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           
           {/* Left Info Panel */}
           <div className="lg:col-span-5 space-y-8">
@@ -141,20 +134,6 @@ export default function Contact() {
                 <FiMessageCircle className="w-4 h-4 text-[#34D399]" />
                 Chat Directly on WhatsApp
               </a>
-            </div>
-
-            {/* Studio Location Visual */}
-            <div className="bg-[#111113] border border-white/[0.06] rounded-2xl aspect-[16/9] overflow-hidden relative flex flex-col justify-end p-8 shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/40 to-transparent z-10" />
-              <img
-                src={locationImage}
-                alt="Studio Location"
-                className="absolute inset-0 w-full h-full object-cover brightness-50"
-              />
-              <div className="relative z-20 space-y-1">
-                <span className="text-xs font-subheading uppercase tracking-widest text-[#B8976A] font-medium">Visiting Us</span>
-                <p className="font-heading text-2xl text-[#EAEAEA]">Nileshwaram, Kasaragod, Kerala</p>
-              </div>
             </div>
           </div>
 
@@ -214,6 +193,23 @@ export default function Contact() {
                 </button>
               </form>
             )}
+          </div>
+        </div>
+
+        {/* Full-Width Interactive Google Maps Container Only at the Bottom */}
+        <div className="pt-8 border-t border-white/[0.06]">
+          <div className="w-full h-[400px] sm:h-[480px] rounded-3xl overflow-hidden border border-white/[0.08] shadow-2xl relative bg-[#111113]">
+            <iframe
+              title="Ink Art Tattoo Studio Map Location"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15582.476483528292!2d75.1245781!3d12.2471927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba47f6d90d79bb7%3A0xb35a39eb2ab7b068!2sNileshwar%2C%20Kerala!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full h-full grayscale contrast-125 opacity-85 hover:opacity-100 transition-opacity duration-500"
+            />
           </div>
         </div>
 
